@@ -1,4 +1,9 @@
 import { Typography } from "@material-ui/core";
+import {
+  extensionMountPoints,
+  mapToMenuItems,
+  useExtensions
+} from "@saleor/apps/useExtensions";
 import CardMenu from "@saleor/components/CardMenu";
 import { CardSpacer } from "@saleor/components/CardSpacer";
 import { Container } from "@saleor/components/Container";
@@ -218,6 +223,12 @@ const OrderDetailsPage: React.FC<OrderDetailsPageProps> = props => {
     }
   ]);
 
+  const { ORDER_DETAILS_MORE_ACTIONS } = useExtensions(
+    extensionMountPoints.ORDER_DETAILS
+  );
+
+  const extensionMenuItems = mapToMenuItems(ORDER_DETAILS_MORE_ACTIONS);
+
   return (
     <Form confirmLeave initial={initial} onSubmit={handleSubmit}>
       {({ change, data, submit }) => {
@@ -232,7 +243,12 @@ const OrderDetailsPage: React.FC<OrderDetailsPageProps> = props => {
               className={classes.header}
               inline
               title={<Title order={order} />}
-              cardMenu={<CardMenu outlined menuItems={selectCardMenuItems} />}
+              cardMenu={
+                <CardMenu
+                  outlined
+                  menuItems={[...selectCardMenuItems, ...extensionMenuItems]}
+                />
+              }
             />
             <div className={classes.date}>
               {order && order.created ? (
